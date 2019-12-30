@@ -76,16 +76,10 @@ class _CyclicScrollerState<E> extends State<CyclicScroller<E>> {
     this._halfZoneCount = this._showItemCount ~/ 2;
     this._upLimit = _singleItemHeight * (_list.length - _halfZoneCount);
     this._downLimit = _singleItemHeight * (2 * _list.length - _halfZoneCount);
-  }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
     _controller = ScrollController(
-      initialScrollOffset: _singleItemHeight *
-          (_list.length - _halfZoneCount + widget.selectIndex),
+      initialScrollOffset: _calTargetScrollOffset(widget.selectIndex)
     );
-
     _controller.addListener(() {
       if (_controller.offset > _downLimit) {
         double newPosition =
@@ -99,6 +93,20 @@ class _CyclicScrollerState<E> extends State<CyclicScroller<E>> {
         _controller.jumpTo(newPosition);
       }
     });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+  }
+
+  void jumpToNewTargetIndex() {
+
+  }
+
+  /// 通过指定的下标计算对应的滚动偏移
+  double _calTargetScrollOffset(int targetIndex) {
+    return _singleItemHeight * (_list.length - _halfZoneCount + targetIndex);
   }
 
   @override
