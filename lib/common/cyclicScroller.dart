@@ -100,10 +100,6 @@ class _CyclicScrollerState<E> extends State<CyclicScroller<E>> {
     super.didChangeDependencies();
   }
 
-  void jumpToNewTargetIndex() {
-
-  }
-
   /// 通过指定的下标计算对应的滚动偏移
   double _calTargetScrollOffset(int targetIndex) {
     return _singleItemHeight * (_list.length - _halfZoneCount + targetIndex);
