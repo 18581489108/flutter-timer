@@ -30,72 +30,95 @@ class _TimerInputPageState extends State<TimerInputPage> {
       padding: const EdgeInsets.all(32.0),
       child: Column(
         children: <Widget>[
-          Container(
-            height: 350.0,
-            //color: Colors.blue,
-            child: Row(
-              children: <Widget>[
-                _buildScroller(
-                  GlobalConstData.groupItemListHintGroup,
-                  Consumer<InitTimerSetting>(
-                      builder: (context, initTimerSetting, child) {
-                    TimerSetting timerSetting = Utility.getTimerSetting(context, initTimerSetting);
-                    int selectIndex = timerSetting == null
-                        ? 0
-                        : GlobalConstData.getIndexByGroupValue(
-                            timerSetting.totalTimes);
-                    return CyclicScroller<DisplayItem>(
-                      selectIndex: selectIndex,
-                      onStopScroll: (DisplayItem item) {
-                        print(item.number);
-                      },
-                      list: GlobalConstData.groupItemList,
-                      totalHeight: SCROLLER_TOTAL_HEIGHT,
-                      width: SCROLLER_WIDTH,
-                      showItemCount: SCROLLER_SHOW_ITEM_COUNT,
-                      displayItemFunc: (DisplayItem item) => item.display,
-                    );
-                  }),
-                ),
-                _buildScroller(
-                    GlobalConstData.singleTimeItemListHintGroup,
-                    CyclicScroller<DisplayItem>(
-                      selectIndex: 2,
-                      onStopScroll: (DisplayItem item) {
-                        print(item.number);
-                      },
-                      list: GlobalConstData.singleTimeItemList,
-                      totalHeight: SCROLLER_TOTAL_HEIGHT,
-                      width: SCROLLER_WIDTH,
-                      showItemCount: SCROLLER_SHOW_ITEM_COUNT,
-                      displayItemFunc: (DisplayItem item) => item.display,
-                    )),
-                _buildScroller(
-                    GlobalConstData.intervalTimeItemListHintGroup,
-                    CyclicScroller<DisplayItem>(
-                      selectIndex: 2,
-                      onStopScroll: (DisplayItem item) {
-                        print(item.number);
-                      },
-                      list: GlobalConstData.intervalTimeItemList,
-                      totalHeight: SCROLLER_TOTAL_HEIGHT,
-                      width: SCROLLER_WIDTH,
-                      showItemCount: SCROLLER_SHOW_ITEM_COUNT,
-                      displayItemFunc: (DisplayItem item) => item.display,
-                    )),
-              ],
-            ),
-          ),
-          Container(
-            height: 100.0,
-            color: Colors.blueGrey,
-          ),
+          _buildInputScrollers(),
+          _buldButtons(),
         ],
       ),
     );
   }
 
-  Widget _buildScroller(HintTextGroup hintTextGroup, Widget scroller) {
+  /// 构建输入用的滚动条
+  Widget _buildInputScrollers() {
+    return Container(
+      height: 350.0,
+      //color: Colors.blue,
+      child: Consumer<InitTimerSetting>(
+          builder: (context, initTimerSetting, child) {
+        TimerSetting timerSetting =
+            Utility.getTimerSetting(context, initTimerSetting);
+        int totalTimesInitSelectIndex;
+        int singleTimeInitSelectIndex;
+        int intervalTimeInitSelectIndex;
+        if (timerSetting == null) {
+          totalTimesInitSelectIndex = 0;
+          singleTimeInitSelectIndex = 0;
+          intervalTimeInitSelectIndex = 0;
+        } else {
+          totalTimesInitSelectIndex = GlobalConstData.getIndexByTotalTimesValue(
+              timerSetting.totalTimes);
+          singleTimeInitSelectIndex = GlobalConstData.getIndexBySingleTimeValue(
+              timerSetting.singleTime);
+          intervalTimeInitSelectIndex =
+              GlobalConstData.getIndexByIntervalTimeValue(
+                  timerSetting.singleInterval);
+        }
+
+        _tempTimerSetting.totalTimes = GlobalConstData
+            .totalTimesItemList[totalTimesInitSelectIndex].number;
+        _tempTimerSetting.singleTime = GlobalConstData
+            .singleTimeItemList[singleTimeInitSelectIndex].number;
+        _tempTimerSetting.singleInterval = GlobalConstData
+            .intervalTimeItemList[intervalTimeInitSelectIndex].number;
+
+        return Row(
+          children: <Widget>[
+            _buildScroller(
+                GlobalConstData.totalTimesItemListHintGroup,
+                CyclicScroller<DisplayItem>(
+                  selectIndex: totalTimesInitSelectIndex,
+                  onStopScroll: (DisplayItem item) {
+                    _tempTimerSetting.totalTimes = item.number;
+                  },
+                  list: GlobalConstData.totalTimesItemList,
+                  totalHeight: SCROLLER_TOTAL_HEIGHT,
+                  width: SCROLLER_WIDTH,
+                  showItemCount: SCROLLER_SHOW_ITEM_COUNT,
+                  displayItemFunc: (DisplayItem item) => item.display,
+                )),
+            _buildScroller(
+                GlobalConstData.singleTimeItemListHintGroup,
+                CyclicScroller<DisplayItem>(
+                  selectIndex: singleTimeInitSelectIndex,
+                  onStopScroll: (DisplayItem item) {
+                    _tempTimerSetting.singleTime = item.number;
+                  },
+                  list: GlobalConstData.singleTimeItemList,
+                  totalHeight: SCROLLER_TOTAL_HEIGHT,
+                  width: SCROLLER_WIDTH,
+                  showItemCount: SCROLLER_SHOW_ITEM_COUNT,
+                  displayItemFunc: (DisplayItem item) => item.display,
+                )),
+            _buildScroller(
+                GlobalConstData.intervalTimeItemListHintGroup,
+                CyclicScroller<DisplayItem>(
+                  selectIndex: intervalTimeInitSelectIndex,
+                  onStopScroll: (DisplayItem item) {
+                    _tempTimerSetting.singleInterval = item.number;
+                  },
+                  list: GlobalConstData.intervalTimeItemList,
+                  totalHeight: SCROLLER_TOTAL_HEIGHT,
+                  width: SCROLLER_WIDTH,
+                  showItemCount: SCROLLER_SHOW_ITEM_COUNT,
+                  displayItemFunc: (DisplayItem item) => item.display,
+                )),
+          ],
+        );
+      }),
+    );
+  }
+
+  Widget _buildScroller(
+      HintTextGroup hintTextGroup, CyclicScroller<DisplayItem> scroller) {
     return Expanded(
       child: Row(
         children: <Widget>[
@@ -110,6 +133,59 @@ class _TimerInputPageState extends State<TimerInputPage> {
           ),
           Text(hintTextGroup.secondHintText,
               textAlign: TextAlign.center, style: scrollerDescTextStyle),
+        ],
+      ),
+    );
+  }
+
+  /// 构建按钮区域
+  Widget _buldButtons() {
+    return Container(
+      height: 100.0,
+      //color: Colors.blueGrey,
+      child: Stack(
+        children: <Widget>[
+          Positioned(
+            top: 10,
+            left: 65,
+            child: IconButton(
+              icon: Icon(
+                Icons.play_circle_filled,
+              ),
+              color: Colors.blue,
+              //highlightColor: Colors.white70,
+              //splashColor: Colors.white70,
+              iconSize: 64,
+              onPressed: () {},
+            ),
+          ),
+          Positioned(
+            top: 10,
+            right: 65,
+            child: IconButton(
+              icon: Icon(
+                Icons.play_circle_filled,
+              ),
+              color: Colors.blue,
+              iconSize: 64,
+              onPressed: () {},
+            ),
+          ),
+
+          /*
+          Expanded(
+              flex: 1,
+              child: Align(
+                alignment: Alignment.topRight,
+                child: IconButton(
+                  icon: Icon(
+                    Icons.play_circle_filled,
+                    size: 64,
+                    color: Colors.blue,
+                  ),
+                  onPressed: () {},
+                ),
+              )),*/
         ],
       ),
     );

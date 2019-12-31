@@ -67,7 +67,12 @@ class AllTimerSettings extends ChangeNotifier {
   
   /// 根据id获取对应的配置项
   TimerSettingItem getTimerSettingItemById(int id) {
-    return _settingList.firstWhere((e) => e.id == id);
+    for (int i = 0; i < _settingList.length; i++) {
+      if (_settingList[i].id == id) {
+        return _settingList[i];
+      }
+    }
+    return null;
   }
 }
 
@@ -75,6 +80,8 @@ class AllTimerSettings extends ChangeNotifier {
 class InitTimerSetting extends ChangeNotifier {
   /// 对应的配置id
   int timerSettingItemId;
+
+  InitTimerSetting({this.timerSettingItemId = -1});
 
   void updateInitTimerSetting(int itemId) {
     timerSettingItemId = itemId;

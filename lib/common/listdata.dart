@@ -24,9 +24,9 @@ class GlobalConstData {
         : str;
   }
 
-  // 显示多少组
-  static final List<DisplayItem> groupItemList = initGroupItems();
-  static List<DisplayItem> initGroupItems() {
+  // 显示总次数
+  static final List<DisplayItem> totalTimesItemList = initTotalTimesItems();
+  static List<DisplayItem> initTotalTimesItems() {
     int count = 99;
     List<DisplayItem> list = new List();
     for (int i = 1; i <= count; i++) {
@@ -36,7 +36,7 @@ class GlobalConstData {
   }
 
   // 通过group的值找到对应的DisplayItem的下标
-  static int getIndexByGroupValue(int gourpValue) {
+  static int getIndexByTotalTimesValue(int gourpValue) {
     return gourpValue - 1;
   }
 
@@ -73,7 +73,7 @@ class GlobalConstData {
   }
 
   // 显示多少组的提示
-  static final HintTextGroup groupItemListHintGroup =
+  static final HintTextGroup totalTimesItemListHintGroup =
       new HintTextGroup('进行', '组');
 
   // 显示单次时间的提示
