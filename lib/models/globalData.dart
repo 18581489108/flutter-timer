@@ -1,19 +1,16 @@
 import 'package:flutter/foundation.dart';
 import 'package:timer/models/timerSetting.dart';
 
+//GlobalData globalData = initGlobalData();
+
+GlobalData initGlobalData() {
+  return GlobalData();
+}
+
 /// 全局数据
 class GlobalData {
   /// 全局的timerSettingid
   static int _timerSettingItemId = 0;
-
-  /// 所有的配置信息
-  final AllTimerSettings allTimerSettings;
-  /// 初始配置
-  final InitTimerSetting initTimerSetting;
-  /// 生效的配置信息
-  final CurrentTimerSetting currentTimerSetting;
-
-  GlobalData(this.allTimerSettings, this.initTimerSetting, this.currentTimerSetting);
   
   static int spawnNextTimerSettingItemId() {
     _timerSettingItemId++;
@@ -83,6 +80,7 @@ class InitTimerSetting extends ChangeNotifier {
     timerSettingItemId = itemId;
     notifyListeners();
   }
+
 }
 
 /// 生效的配置信息
@@ -94,4 +92,4 @@ class CurrentTimerSetting extends ChangeNotifier {
     timerSetting = TimerSetting.copy(setting);
     notifyListeners();
   }
-}
+} 
