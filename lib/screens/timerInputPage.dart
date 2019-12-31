@@ -153,10 +153,10 @@ class _TimerInputPageState extends State<TimerInputPage> {
                 Icons.play_circle_filled,
               ),
               color: Colors.blue,
-              //highlightColor: Colors.white70,
-              //splashColor: Colors.white70,
               iconSize: 64,
-              onPressed: () {},
+              onPressed: () {
+                print(_tempTimerSetting.totalTimes);
+              },
             ),
           ),
           Positioned(
@@ -164,11 +164,13 @@ class _TimerInputPageState extends State<TimerInputPage> {
             right: 65,
             child: IconButton(
               icon: Icon(
-                Icons.play_circle_filled,
+                Icons.favorite_border,
               ),
               color: Colors.blue,
               iconSize: 64,
-              onPressed: () {},
+              onPressed: () {
+                print('need save');
+              },
             ),
           ),
 
