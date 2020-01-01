@@ -30,6 +30,9 @@ class _CountdownContainer extends StatefulWidget {
 
   @override
   _CountdownContainerState createState() => _CountdownContainerState();
+  void test() {
+    
+  }
 }
 
 class _CountdownContainerState extends State<_CountdownContainer> {
@@ -95,6 +98,7 @@ class _CountdownContainerState extends State<_CountdownContainer> {
       child: Column(
         children: <Widget>[
           _buildDisplayArea(),
+          _buldButtons(),
         ],
       ),
     );
@@ -216,6 +220,46 @@ class _CountdownContainerState extends State<_CountdownContainer> {
     return '$integerPart.$decimalPart';
 
   }
+  
+   /// 构建按钮区域
+  Widget _buldButtons() {
+    return Container(
+      height: 100.0,
+      //color: Colors.blueGrey,
+      child: Stack(
+        children: <Widget>[
+          Positioned(
+            top: 10,
+            left: 65,
+            child: IconButton(
+              icon: Icon(
+                Icons.stop,
+              ),
+              color: Colors.blue,
+              iconSize: 64,
+              onPressed: () {
+              },
+            ),
+          ),
+          Positioned(
+            top: 10,
+            right: 65,
+            child: IconButton(
+              icon: Icon(
+                Icons.pause_circle_filled,
+              ),
+              color: Colors.blue,
+              iconSize: 64,
+              onPressed: () {
+                // TODO 暂停功能
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   void dispose() {
     _countdownTimer?.cancel();

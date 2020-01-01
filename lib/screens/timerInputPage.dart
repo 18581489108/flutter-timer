@@ -174,21 +174,6 @@ class _TimerInputPageState extends State<TimerInputPage> {
               },
             ),
           ),
-
-          /*
-          Expanded(
-              flex: 1,
-              child: Align(
-                alignment: Alignment.topRight,
-                child: IconButton(
-                  icon: Icon(
-                    Icons.play_circle_filled,
-                    size: 64,
-                    color: Colors.blue,
-                  ),
-                  onPressed: () {},
-                ),
-              )),*/
         ],
       ),
     );
