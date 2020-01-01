@@ -11,4 +11,12 @@ class Utility {
         .getTimerSettingItemById(initTimerSetting.timerSettingItemId);
     return item == null ? null : item.timerSetting;
   }
+
+  static String zeroPadding(int num, {int pad: 0}) {
+    var str = num.toString();
+    var paddingToAdd = pad - str.length;
+    return (paddingToAdd > 0)
+        ? "${new List.filled(paddingToAdd, '0').join('')}$num"
+        : str;
+  }
 }

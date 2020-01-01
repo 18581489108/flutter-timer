@@ -2,7 +2,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
-import 'package:timer/common/Utility.dart';
 import 'package:timer/common/cyclicScroller.dart';
 import 'package:timer/common/listdata.dart';
 import 'package:timer/common/theme.dart';

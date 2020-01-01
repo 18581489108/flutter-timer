@@ -1,3 +1,5 @@
+import 'package:timer/common/Utility.dart';
+
 ///==================== 滚动区域的显示对象 ========================
 class DisplayItem {
   final int number;
@@ -17,11 +19,7 @@ class HintTextGroup {
 /// 全局的静态数据
 class GlobalConstData {
   static String zeroPadding(int num, {int pad: 0}) {
-    var str = num.toString();
-    var paddingToAdd = pad - str.length;
-    return (paddingToAdd > 0)
-        ? "${new List.filled(paddingToAdd, '0').join('')}$num"
-        : str;
+    return Utility.zeroPadding(num, pad: pad);
   }
 
   // 显示总次数

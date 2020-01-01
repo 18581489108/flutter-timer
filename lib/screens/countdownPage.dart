@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:timer/common/Utility.dart';
 import 'package:timer/common/theme.dart';
 import 'package:timer/models/timerSetting.dart';
 import 'package:timer/models/globalData.dart';
@@ -35,6 +36,7 @@ class _CountdownContainerState extends State<_CountdownContainer> {
   Timer _countdownTimer;
   int _countdownNum = 59;
   TimerSetting _timerSetting;
+  int _totalTimes;
   int _singleTime;
   int _intervalTime;
   
@@ -50,13 +52,15 @@ class _CountdownContainerState extends State<_CountdownContainer> {
     super.initState();
 
     _timerSetting = widget.timerSetting;
+    _totalTimes = _timerSetting.totalTimes;
     _singleTime = _timerSetting.singleTime * 1000;
+    _intervalTime = _timerSetting.singleInterval * 1000;
     _countdownFlag = true;
 
     _countdownTimer =
         new Timer.periodic(new Duration(milliseconds: CONTDOWN_INTERVAL_MILL), (timer) {
           setState(() {
-            if (_timerSetting.totalTimes <= 0) {
+            if (_totalTimes <= 0) {
               _countdownTimer.cancel();
               _countdownTimer = null;
               return;
@@ -66,15 +70,17 @@ class _CountdownContainerState extends State<_CountdownContainer> {
                 _singleTime -= CONTDOWN_INTERVAL_MILL;
               } else {
                 _countdownFlag = !_countdownFlag;
-                _intervalTime = _timerSetting.singleInterval * 1000;
               }
             } else {
               if (_intervalTime > 0) {
                 _intervalTime -= CONTDOWN_INTERVAL_MILL;
               } else {
                 _countdownFlag = !_countdownFlag;
-                _singleTime = _timerSetting.singleTime * 1000;
-                _timerSetting.totalTimes--;
+                _totalTimes--;
+                if (_totalTimes > 0) {
+                  _singleTime = _timerSetting.singleTime * 1000;
+                  _intervalTime = _timerSetting.singleInterval * 1000;
+                }
               }
             }
             
@@ -110,7 +116,7 @@ class _CountdownContainerState extends State<_CountdownContainer> {
                 child: CircularProgressIndicator(
                   backgroundColor: Colors.grey[200],
                   valueColor: AlwaysStoppedAnimation(totalTimesCountDownColor),
-                  value: .7,
+                  value: (_totalTimes / _timerSetting.totalTimes),
                 ),
               ),
               SizedBox(
@@ -120,7 +126,7 @@ class _CountdownContainerState extends State<_CountdownContainer> {
                   backgroundColor: Colors.grey[200],
                   valueColor:
                       AlwaysStoppedAnimation(intervalTimesCountDownColor),
-                  value: .7,
+                  value: (_intervalTime / (_timerSetting.singleInterval * 1000)),
                 ),
               ),
               SizedBox(
@@ -129,10 +135,10 @@ class _CountdownContainerState extends State<_CountdownContainer> {
                 child: CircularProgressIndicator(
                   backgroundColor: Colors.grey[200],
                   valueColor: AlwaysStoppedAnimation(singleTimesCountDownColor),
-                  value: .7,
+                  value: (_singleTime / (_timerSetting.singleTime * 1000)),
                 ),
               ),
-              Text('剩余时间${_countdownFlag ? _singleTime : _intervalTime}'),
+              _countdownText(),
             ],
           ),
         ),
@@ -178,11 +184,42 @@ class _CountdownContainerState extends State<_CountdownContainer> {
     );
   }
 
+  Widget _countdownText() {
+    
+    if (_totalTimes <= 0) {
+      return Text('END', style: TextStyle(
+        color: totalTimesCountDownColor,
+        fontSize: 32,
+      ));
+    }
+
+    String text;
+    Color color;
+    if (_countdownFlag) {
+      text = _formatTimeString(_singleTime);
+      color = singleTimesCountDownColor;
+    } else {
+      text = _formatTimeString(_intervalTime);
+      color = intervalTimesCountDownColor;
+    }
+    
+    return Text(text, style: TextStyle(
+      color: color,
+      fontSize: 32,
+    ));
+  }
+
+  String _formatTimeString(int time) {
+    String integerPart = Utility.zeroPadding(time ~/ 1000, pad: 2);
+    String decimalPart = ((time % 1000) ~/ 100).toString();
+
+    return '$integerPart.$decimalPart';
+
+  }
   @override
   void dispose() {
     _countdownTimer?.cancel();
     _countdownTimer = null;
-    print('销毁 _CountdownContainerState');
     super.dispose();
   }
 }
