@@ -20,7 +20,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('计时', style: Theme.of(context).textTheme.display4),
+        title: Text('Timer', style: Theme.of(context).textTheme.display4),
         backgroundColor: Colors.white,
         actions: [
           IconButton(

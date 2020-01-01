@@ -18,3 +18,10 @@ final scrollerDescTextStyle = TextStyle(
     fontSize: 12,
     //height: 1.2,
     fontFamily: "微软雅黑");
+
+/// 组数的倒计时颜色
+final Color totalTimesCountDownColor = Colors.black54;
+/// 单次时间的倒计时颜色
+final Color singleTimesCountDownColor = Colors.blue;
+/// 间隔的倒计时颜色
+final Color intervalTimesCountDownColor = Colors.blueGrey;

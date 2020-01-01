@@ -156,6 +156,7 @@ class _TimerInputPageState extends State<TimerInputPage> {
               iconSize: 64,
               onPressed: () {
                 print(_tempTimerSetting.totalTimes);
+                Navigator.pushNamed(context, RouteConsts.COUNT_DOWN_PAGE);
               },
             ),
           ),

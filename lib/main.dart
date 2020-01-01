@@ -5,6 +5,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:timer/common/theme.dart';
+import 'package:timer/screens/countdownPage.dart';
 import 'package:timer/screens/home.dart';
 import 'package:timer/models/globalData.dart';
 
@@ -31,8 +32,10 @@ class TimerApp extends StatelessWidget {
         theme: appTheme,
         initialRoute: '/',
         routes: {
-          '/': (context) => HomePage(),
+          RouteConsts.HOME_PAGE: (context) => HomePage(),
+          RouteConsts.COUNT_DOWN_PAGE: (context) => CountdownPage(),
           //'/saved': (context) =>
+          
         },
       ),
     );

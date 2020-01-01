@@ -100,3 +100,10 @@ class CurrentTimerSetting extends ChangeNotifier {
     notifyListeners();
   }
 } 
+
+/// 路由的静态定义
+class RouteConsts {
+  static const String HOME_PAGE = '/';
+  static const String COUNT_DOWN_PAGE = '/countDown';
+  static const String SAVED_PAGE = '/saved';
+}
