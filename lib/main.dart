@@ -17,14 +17,14 @@ class TimerApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         Provider(create: (context) => initGlobalData()),
-        ChangeNotifierProvider<AllTimerSettings>(
-          create: (context) => AllTimerSettings(),
+        ChangeNotifierProvider<AllTimerSettingsModel>(
+          create: (context) => AllTimerSettingsModel(),
         ),
-        ChangeNotifierProvider<InitTimerSetting>(
-          create: (context) => InitTimerSetting(),
+        ChangeNotifierProvider<InitTimerSettingModel>(
+          create: (context) => InitTimerSettingModel(),
         ),
-        ChangeNotifierProvider<CurrentTimerSetting>(
-          create: (context) => CurrentTimerSetting(),
+        ChangeNotifierProvider<CurrentTimerSettingModel>(
+          create: (context) => CurrentTimerSettingModel(),
         ),
       ],
       child: MaterialApp(

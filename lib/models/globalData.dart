@@ -19,7 +19,7 @@ class GlobalData {
 }
 
 /// 所有配置信息
-class AllTimerSettings extends ChangeNotifier {
+class AllTimerSettingsModel extends ChangeNotifier {
   final List<TimerSettingItem> _settingList = List<TimerSettingItem>();
   
   /// 添加多个配置
@@ -77,11 +77,11 @@ class AllTimerSettings extends ChangeNotifier {
 }
 
 /// 初始的配置，如果这个配置发生变化，那么需要重建输入
-class InitTimerSetting extends ChangeNotifier {
+class InitTimerSettingModel extends ChangeNotifier {
   /// 对应的配置id
   int timerSettingItemId;
 
-  InitTimerSetting({this.timerSettingItemId = -1});
+  InitTimerSettingModel({this.timerSettingItemId = -1});
 
   void updateInitTimerSetting(int itemId) {
     timerSettingItemId = itemId;
@@ -91,7 +91,7 @@ class InitTimerSetting extends ChangeNotifier {
 }
 
 /// 生效的配置信息
-class CurrentTimerSetting extends ChangeNotifier {
+class CurrentTimerSettingModel extends ChangeNotifier {
   /// 生效的配置信息
   TimerSetting timerSetting;
 

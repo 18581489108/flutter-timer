@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
@@ -5,8 +6,8 @@ import 'package:timer/common/Utility.dart';
 import 'package:timer/common/cyclicScroller.dart';
 import 'package:timer/common/listdata.dart';
 import 'package:timer/common/theme.dart';
-import 'package:timer/models/timerSetting.dart';
 import 'package:timer/models/globalData.dart';
+import 'package:timer/models/timerSetting.dart';
 
 class TimerInputPage extends StatefulWidget {
   @override
@@ -31,7 +32,7 @@ class _TimerInputPageState extends State<TimerInputPage> {
       child: Column(
         children: <Widget>[
           _buildInputScrollers(),
-          _buldButtons(),
+          _buldButtons(context),
         ],
       ),
     );
@@ -42,10 +43,9 @@ class _TimerInputPageState extends State<TimerInputPage> {
     return Container(
       height: 350.0,
       //color: Colors.blue,
-      child: Consumer<InitTimerSetting>(
-          builder: (context, initTimerSetting, child) {
-        TimerSetting timerSetting =
-            Utility.getTimerSetting(context, initTimerSetting);
+      child: Consumer<CurrentTimerSettingModel>(
+          builder: (context, currentTimerSettingModel, child) {
+        TimerSetting timerSetting = currentTimerSettingModel.timerSetting;
         int totalTimesInitSelectIndex;
         int singleTimeInitSelectIndex;
         int intervalTimeInitSelectIndex;
@@ -139,7 +139,7 @@ class _TimerInputPageState extends State<TimerInputPage> {
   }
 
   /// 构建按钮区域
-  Widget _buldButtons() {
+  Widget _buldButtons(BuildContext context) {
     return Container(
       height: 100.0,
       //color: Colors.blueGrey,
@@ -155,7 +155,8 @@ class _TimerInputPageState extends State<TimerInputPage> {
               color: Colors.blue,
               iconSize: 64,
               onPressed: () {
-                print(_tempTimerSetting.totalTimes);
+                CurrentTimerSettingModel currentTimerSettingModel = Provider.of<CurrentTimerSettingModel>(context);
+                currentTimerSettingModel.updateCurrentTimerSetting(_tempTimerSetting);
                 Navigator.pushNamed(context, RouteConsts.COUNT_DOWN_PAGE);
               },
             ),
