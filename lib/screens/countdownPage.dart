@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:timer/common/theme.dart';
+import 'package:timer/models/countdownData.dart';
 import 'package:timer/models/timerSetting.dart';
 import 'package:timer/models/globalData.dart';
 
@@ -11,13 +12,36 @@ class CountdownPage extends StatelessWidget {
   Widget build(BuildContext context) {
     CurrentTimerSettingModel currentTimerSettingModel =
         Provider.of<CurrentTimerSettingModel>(context);
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Count Down', style: Theme.of(context).textTheme.display4),
-        backgroundColor: Colors.white,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<TotalTimesModel>(
+          create: (context) => TotalTimesModel(),
+        ),
+        ChangeNotifierProvider<SingleTimeModel>(
+          create: (context) => SingleTimeModel(),
+        ),
+        ChangeNotifierProvider<IntervalTimeModel>(
+          create: (context) => IntervalTimeModel(),
+        ),
+        ChangeNotifierProxyProvider3<TotalTimesModel, SingleTimeModel, IntervalTimeModel, CountdownFlagModel>(
+          create: (context) => CountdownFlagModel(),
+          update: (context, totalTimesModel, singleTimeModel, intervalTimeModel, previousCartCountdownFlagModel) {
+            CountdownFlagModel model = CountdownFlagModel();
+            model.countdownFlag = previousCartCountdownFlagModel?.countdownFlag;
+            return model;
+          }
+        ),
+      ],
+      child: Scaffold(
+        appBar: AppBar(
+          title:
+              Text('Count Down', style: Theme.of(context).textTheme.display4),
+          backgroundColor: Colors.white,
+        ),
+        body: _CountdownContainer(
+            timerSetting:
+                TimerSetting.copy(currentTimerSettingModel.timerSetting)),
       ),
-      body: _CountdownContainer(
-          timerSetting: TimerSetting.copy(currentTimerSettingModel.timerSetting)),
     );
   }
 }
@@ -33,11 +57,10 @@ class _CountdownContainer extends StatefulWidget {
 
 class _CountdownContainerState extends State<_CountdownContainer> {
   Timer _countdownTimer;
-  int _countdownNum = 59;
   TimerSetting _timerSetting;
   int _singleTime;
   int _intervalTime;
-  
+
   /// 标记倒计时是单次时间还是间隔时间
   /// true 为单次时间
   /// false 为间隔时间
@@ -50,36 +73,49 @@ class _CountdownContainerState extends State<_CountdownContainer> {
     super.initState();
 
     _timerSetting = widget.timerSetting;
+    
+    
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
     _singleTime = _timerSetting.singleTime * 1000;
     _countdownFlag = true;
 
-    _countdownTimer =
-        new Timer.periodic(new Duration(milliseconds: CONTDOWN_INTERVAL_MILL), (timer) {
-          setState(() {
-            if (_timerSetting.totalTimes <= 0) {
-              _countdownTimer.cancel();
-              _countdownTimer = null;
-              return;
-            }
-            if (_countdownFlag) {
-              if (_singleTime > 0) {
-                _singleTime -= CONTDOWN_INTERVAL_MILL;
-              } else {
-                _countdownFlag = !_countdownFlag;
-                _intervalTime = _timerSetting.singleInterval * 1000;
-              }
-            } else {
-              if (_intervalTime > 0) {
-                _intervalTime -= CONTDOWN_INTERVAL_MILL;
-              } else {
-                _countdownFlag = !_countdownFlag;
-                _singleTime = _timerSetting.singleTime * 1000;
-                _timerSetting.totalTimes--;
-              }
-            }
-            
-          });
-        });
+    Provider.of<TotalTimesModel>(context).setTotalTimes(_timerSetting.totalTimes);
+    Provider.of<SingleTimeModel>(context).setSingleTime(_timerSetting.singleTime);
+    Provider.of<IntervalTimeModel>(context).setIntervalTime(_timerSetting.singleInterval);
+    Provider.of<CountdownFlagModel>(context).setCountdownFlag(true);
+
+
+    _countdownTimer = new Timer.periodic(
+        new Duration(milliseconds: CONTDOWN_INTERVAL_MILL), (timer) {
+      setState(() {
+        if (_timerSetting.totalTimes <= 0) {
+          _countdownTimer.cancel();
+          _countdownTimer = null;
+          return;
+        }
+        if (_countdownFlag) {
+          if (_singleTime > 0) {
+            _singleTime -= CONTDOWN_INTERVAL_MILL;
+          } else {
+            _countdownFlag = !_countdownFlag;
+            _intervalTime = _timerSetting.singleInterval * 1000;
+          }
+        } else {
+          if (_intervalTime > 0) {
+            _intervalTime -= CONTDOWN_INTERVAL_MILL;
+          } else {
+            _countdownFlag = !_countdownFlag;
+            _singleTime = _timerSetting.singleTime * 1000;
+            _timerSetting.totalTimes--;
+          }
+        }
+      });
+    });
   }
 
   @override
