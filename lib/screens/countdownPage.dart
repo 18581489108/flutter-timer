@@ -296,7 +296,7 @@ class _IntervalTimeCircularProgressIndicator extends StatelessWidget {
         return CircularProgressIndicator(
           backgroundColor: Colors.grey[200],
           valueColor: AlwaysStoppedAnimation(intervalTimeCountDownColor),
-          value: (intervalTimeModel.intervalTime / timerSetting.singleInterval),
+          value: (intervalTimeModel.intervalTime / (timerSetting.singleInterval * 1000)),
         );
       },
     );
@@ -313,10 +313,11 @@ class _SingleTimeCircularProgressIndicator extends StatelessWidget {
     return Consumer<SingleTimeModel>(
       builder: (BuildContext context, SingleTimeModel singleTimeModel,
           Widget child) {
+            //print((singleTimeModel.singleTime / (timerSetting.singleTime * 1000)));
         return CircularProgressIndicator(
           backgroundColor: Colors.grey[200],
           valueColor: AlwaysStoppedAnimation(singleTimeCountDownColor),
-          value: (singleTimeModel.singleTime / timerSetting.singleTime),
+          value: (singleTimeModel.singleTime / (timerSetting.singleTime * 1000)),
         );
       },
     );
