@@ -66,14 +66,6 @@ class _CountdownContainer extends StatefulWidget {
 class _CountdownContainerState extends State<_CountdownContainer> {
   Timer _countdownTimer;
   TimerSetting _timerSetting;
-  int _totalTimes;
-  int _singleTime;
-  int _intervalTime;
-
-  /// 标记倒计时是单次时间还是间隔时间
-  /// true 为单次时间
-  /// false 为间隔时间
-  bool _countdownFlag;
 
   /// 倒计时的间隔
   static const int COUNTDOWN_INTERVAL_MILL = 100;
@@ -81,7 +73,6 @@ class _CountdownContainerState extends State<_CountdownContainer> {
   void initState() {
     super.initState();
     _timerSetting = widget.timerSetting;
-    print('initState');
     _resetCountdownTimer();
   }
 
@@ -129,33 +120,6 @@ class _CountdownContainerState extends State<_CountdownContainer> {
           }
         }
       }
-      /*
-      setState(() {
-        if (_totalTimes <= 0) {
-          _countdownTimer.cancel();
-          _countdownTimer = null;
-          return;
-        }
-        if (_countdownFlag) {
-          if (_singleTime > 0) {
-            _singleTime -= CONTDOWN_INTERVAL_MILL;
-          } else {
-            _countdownFlag = !_countdownFlag;
-          }
-        } else {
-          if (_intervalTime > 0) {
-            _intervalTime -= CONTDOWN_INTERVAL_MILL;
-          } else {
-            _countdownFlag = !_countdownFlag;
-            _totalTimes--;
-            if (_totalTimes > 0) {
-              _singleTime = _timerSetting.singleTime * 1000;
-              _intervalTime = _timerSetting.singleInterval * 1000;
-            }
-          }
-        }
-      });
-      */
     });
   }
 
@@ -197,7 +161,7 @@ class _CountdownContainerState extends State<_CountdownContainer> {
                 width: 150,
                 child: _SingleTimeCircularProgressIndicator(_timerSetting),
               ),
-              //_CountdownText(),
+              _CountdownText(),
             ],
           ),
         ),
@@ -241,39 +205,6 @@ class _CountdownContainerState extends State<_CountdownContainer> {
         ],
       ),
     );
-  }
-
-  Widget _countdownText() {
-    if (_totalTimes <= 0) {
-      return Text('END',
-          style: TextStyle(
-            color: totalTimesCountDownColor,
-            fontSize: 32,
-          ));
-    }
-
-    String text;
-    Color color;
-    if (_countdownFlag) {
-      text = _formatTimeString(_singleTime);
-      color = singleTimesCountDownColor;
-    } else {
-      text = _formatTimeString(_intervalTime);
-      color = intervalTimesCountDownColor;
-    }
-
-    return Text(text,
-        style: TextStyle(
-          color: color,
-          fontSize: 32,
-        ));
-  }
-
-  String _formatTimeString(int time) {
-    String integerPart = Utility.zeroPadding(time ~/ 1000, pad: 2);
-    String decimalPart = ((time % 1000) ~/ 100).toString();
-
-    return '$integerPart.$decimalPart';
   }
 
   /// 构建按钮区域
