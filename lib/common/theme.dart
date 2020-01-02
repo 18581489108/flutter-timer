@@ -22,6 +22,6 @@ final scrollerDescTextStyle = TextStyle(
 /// 组数的倒计时颜色
 final Color totalTimesCountDownColor = Colors.black54;
 /// 单次时间的倒计时颜色
-final Color singleTimesCountDownColor = Colors.blue;
+final Color singleTimeCountDownColor = Colors.blue;
 /// 间隔的倒计时颜色
-final Color intervalTimesCountDownColor = Colors.blueGrey;
+final Color intervalTimeCountDownColor = Colors.blueGrey;

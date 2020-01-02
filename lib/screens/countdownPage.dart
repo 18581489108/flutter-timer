@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -13,7 +14,8 @@ class CountdownPage extends StatelessWidget {
   Widget build(BuildContext context) {
     CurrentTimerSettingModel currentTimerSettingModel =
         Provider.of<CurrentTimerSettingModel>(context);
-    TimerSetting timerSetting = TimerSetting.copy(currentTimerSettingModel.timerSetting);
+    TimerSetting timerSetting =
+        TimerSetting.copy(currentTimerSettingModel.timerSetting);
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<TotalTimesModel>(
@@ -23,10 +25,14 @@ class CountdownPage extends StatelessWidget {
           create: (context) => SingleTimeModel(timerSetting.singleTime * 1000),
         ),
         ChangeNotifierProvider<IntervalTimeModel>(
-          create: (context) => IntervalTimeModel(timerSetting.singleInterval * 1000),
+          create: (context) =>
+              IntervalTimeModel(timerSetting.singleInterval * 1000),
         ),
         ChangeNotifierProvider<CountdownFlagModel>(
           create: (context) => CountdownFlagModel(true),
+        ),
+        ChangeNotifierProvider<PlayStatusModel>(
+          create: (context) => PlayStatusModel(true),
         ),
         /*
         ChangeNotifierProxyProvider3<TotalTimesModel, SingleTimeModel,
@@ -47,8 +53,7 @@ class CountdownPage extends StatelessWidget {
               Text('Count Down', style: Theme.of(context).textTheme.display4),
           backgroundColor: Colors.white,
         ),
-        body: _CountdownContainer(
-            timerSetting: timerSetting),
+        body: _CountdownContainer(timerSetting: timerSetting),
       ),
     );
   }
@@ -79,7 +84,6 @@ class _CountdownContainerState extends State<_CountdownContainer> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    
   }
 
   void _resetCountdownTimer() {
@@ -95,10 +99,10 @@ class _CountdownContainerState extends State<_CountdownContainer> {
       }
 
       CountdownFlagModel countdownFlagModel =
-      Provider.of<CountdownFlagModel>(context);
+          Provider.of<CountdownFlagModel>(context);
       SingleTimeModel singleTimeModel = Provider.of<SingleTimeModel>(context);
       IntervalTimeModel intervalTimeModel =
-      Provider.of<IntervalTimeModel>(context);
+          Provider.of<IntervalTimeModel>(context);
       if (countdownFlagModel.countdownFlag) {
         if (singleTimeModel.singleTime > 0) {
           singleTimeModel.decSingleTime(COUNTDOWN_INTERVAL_MILL);
@@ -172,8 +176,8 @@ class _CountdownContainerState extends State<_CountdownContainer> {
           child: Row(
             children: <Widget>[
               _colorSummary('剩余组数', totalTimesCountDownColor),
-              _colorSummary('间隔时间', intervalTimesCountDownColor),
-              _colorSummary('单次时间', singleTimesCountDownColor),
+              _colorSummary('间隔时间', intervalTimeCountDownColor),
+              _colorSummary('单次时间', singleTimeCountDownColor),
             ],
           ),
         )
@@ -229,15 +233,19 @@ class _CountdownContainerState extends State<_CountdownContainer> {
           Positioned(
             top: 10,
             right: 65,
-            child: IconButton(
-              icon: Icon(
-                Icons.pause_circle_filled,
-              ),
-              color: Colors.blue,
-              iconSize: 64,
+            child: _PauseOrPlayButton(
               onPressed: () {
-                // TODO 暂停功能
+                PlayStatusModel playStatusModel = Provider.of<PlayStatusModel>(context);
+                if (playStatusModel.isPlaying) {
+                  _countdownTimer?.cancel();
+                  _countdownTimer = null;
+                } else {
+                  _resetCountdownTimer();
+                }
+
+                playStatusModel.setIsPlaying(!playStatusModel.isPlaying);
               },
+              
             ),
           ),
         ],
@@ -253,18 +261,11 @@ class _CountdownContainerState extends State<_CountdownContainer> {
   }
 }
 
-class _TotalTimesCircularProgressIndicator extends StatefulWidget {
+class _TotalTimesCircularProgressIndicator extends StatelessWidget {
   final TimerSetting timerSetting;
 
   _TotalTimesCircularProgressIndicator(this.timerSetting);
 
-  @override
-  _TotalTimesCircularProgressIndicatorState createState() =>
-      _TotalTimesCircularProgressIndicatorState();
-}
-
-class _TotalTimesCircularProgressIndicatorState
-    extends State<_TotalTimesCircularProgressIndicator> {
   @override
   Widget build(BuildContext context) {
     return Consumer<TotalTimesModel>(
@@ -273,25 +274,18 @@ class _TotalTimesCircularProgressIndicatorState
         return CircularProgressIndicator(
           backgroundColor: Colors.grey[200],
           valueColor: AlwaysStoppedAnimation(totalTimesCountDownColor),
-          value: (totalTimesModel.totalTimes / widget.timerSetting.totalTimes),
+          value: (totalTimesModel.totalTimes / timerSetting.totalTimes),
         );
       },
     );
   }
 }
 
-class _IntervalTimeCircularProgressIndicator extends StatefulWidget {
+class _IntervalTimeCircularProgressIndicator extends StatelessWidget {
   final TimerSetting timerSetting;
 
   _IntervalTimeCircularProgressIndicator(this.timerSetting);
 
-  @override
-  _IntervalTimeCircularProgressIndicatorState createState() =>
-      _IntervalTimeCircularProgressIndicatorState();
-}
-
-class _IntervalTimeCircularProgressIndicatorState
-    extends State<_IntervalTimeCircularProgressIndicator> {
   @override
   Widget build(BuildContext context) {
     return Consumer<IntervalTimeModel>(
@@ -299,27 +293,19 @@ class _IntervalTimeCircularProgressIndicatorState
           Widget child) {
         return CircularProgressIndicator(
           backgroundColor: Colors.grey[200],
-          valueColor: AlwaysStoppedAnimation(totalTimesCountDownColor),
-          value: (intervalTimeModel.intervalTime /
-              widget.timerSetting.singleInterval),
+          valueColor: AlwaysStoppedAnimation(intervalTimeCountDownColor),
+          value: (intervalTimeModel.intervalTime / timerSetting.singleInterval),
         );
       },
     );
   }
 }
 
-class _SingleTimeCircularProgressIndicator extends StatefulWidget {
+class _SingleTimeCircularProgressIndicator extends StatelessWidget {
   final TimerSetting timerSetting;
 
   _SingleTimeCircularProgressIndicator(this.timerSetting);
 
-  @override
-  _SingleTimeCircularProgressIndicatorState createState() =>
-      _SingleTimeCircularProgressIndicatorState();
-}
-
-class _SingleTimeCircularProgressIndicatorState
-    extends State<_SingleTimeCircularProgressIndicator> {
   @override
   Widget build(BuildContext context) {
     return Consumer<SingleTimeModel>(
@@ -327,20 +313,15 @@ class _SingleTimeCircularProgressIndicatorState
           Widget child) {
         return CircularProgressIndicator(
           backgroundColor: Colors.grey[200],
-          valueColor: AlwaysStoppedAnimation(totalTimesCountDownColor),
-          value: (singleTimeModel.singleTime / widget.timerSetting.singleTime),
+          valueColor: AlwaysStoppedAnimation(singleTimeCountDownColor),
+          value: (singleTimeModel.singleTime / timerSetting.singleTime),
         );
       },
     );
   }
 }
 
-class _CountdownText extends StatefulWidget {
-  @override
-  _CountdownTextState createState() => _CountdownTextState();
-}
-
-class _CountdownTextState extends State<_CountdownText> {
+class _CountdownText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer4<TotalTimesModel, SingleTimeModel, IntervalTimeModel,
@@ -363,10 +344,10 @@ class _CountdownTextState extends State<_CountdownText> {
         Color color;
         if (countdownFlagModel.countdownFlag) {
           text = _formatTimeString(singleTimeModel.singleTime);
-          color = singleTimesCountDownColor;
+          color = singleTimeCountDownColor;
         } else {
           text = _formatTimeString(intervalTimeModel.intervalTime);
-          color = intervalTimesCountDownColor;
+          color = intervalTimeCountDownColor;
         }
 
         return Text(text,
@@ -383,5 +364,26 @@ class _CountdownTextState extends State<_CountdownText> {
     String decimalPart = ((time % 1000) ~/ 100).toString();
 
     return '$integerPart.$decimalPart';
+  }
+}
+
+class _PauseOrPlayButton extends StatelessWidget {
+  final VoidCallback onPressed;
+
+  const _PauseOrPlayButton({Key key, this.onPressed}) : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<PlayStatusModel>(
+      builder: (BuildContext context, PlayStatusModel playStatusModel,
+          Widget child) {
+            return IconButton(
+              icon: Icon(
+                playStatusModel.isPlaying ? Icons.pause_circle_filled : Icons.play_circle_filled,
+              ),
+              color: Colors.blue,
+              iconSize: 64,
+              onPressed: onPressed);
+          },
+    );
   }
 }

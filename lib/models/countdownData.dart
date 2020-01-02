@@ -69,3 +69,15 @@ class CountdownFlagModel extends ChangeNotifier {
     notifyListeners();
   }
 }
+
+/// 播放状态
+class PlayStatusModel extends ChangeNotifier {
+  bool isPlaying;
+
+  PlayStatusModel(this.isPlaying);
+
+  void setIsPlaying(bool isPlaying) {
+    this.isPlaying = isPlaying;
+    notifyListeners();
+  }
+}
