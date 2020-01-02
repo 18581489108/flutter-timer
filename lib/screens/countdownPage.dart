@@ -227,7 +227,9 @@ class _CountdownContainerState extends State<_CountdownContainer> {
               ),
               color: Colors.blue,
               iconSize: 64,
-              onPressed: () {},
+              onPressed: () {
+                Navigator.pop(context);
+              },
             ),
           ),
           Positioned(
@@ -373,8 +375,8 @@ class _PauseOrPlayButton extends StatelessWidget {
   const _PauseOrPlayButton({Key key, this.onPressed}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    return Consumer<PlayStatusModel>(
-      builder: (BuildContext context, PlayStatusModel playStatusModel,
+    return Consumer2<PlayStatusModel, TotalTimesModel>(
+      builder: (BuildContext context, PlayStatusModel playStatusModel, TotalTimesModel totalTimesModel,
           Widget child) {
             return IconButton(
               icon: Icon(
@@ -382,7 +384,7 @@ class _PauseOrPlayButton extends StatelessWidget {
               ),
               color: Colors.blue,
               iconSize: 64,
-              onPressed: onPressed);
+              onPressed: totalTimesModel.totalTimes > 0 ? onPressed : null);
           },
     );
   }
