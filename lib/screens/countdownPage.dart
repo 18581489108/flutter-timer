@@ -13,19 +13,20 @@ class CountdownPage extends StatelessWidget {
   Widget build(BuildContext context) {
     CurrentTimerSettingModel currentTimerSettingModel =
         Provider.of<CurrentTimerSettingModel>(context);
+    TimerSetting timerSetting = TimerSetting.copy(currentTimerSettingModel.timerSetting);
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<TotalTimesModel>(
-          create: (context) => TotalTimesModel(),
+          create: (context) => TotalTimesModel(timerSetting.totalTimes),
         ),
         ChangeNotifierProvider<SingleTimeModel>(
-          create: (context) => SingleTimeModel(),
+          create: (context) => SingleTimeModel(timerSetting.singleTime * 1000),
         ),
         ChangeNotifierProvider<IntervalTimeModel>(
-          create: (context) => IntervalTimeModel(),
+          create: (context) => IntervalTimeModel(timerSetting.singleInterval * 1000),
         ),
         ChangeNotifierProvider<CountdownFlagModel>(
-          create: (context) => CountdownFlagModel(),
+          create: (context) => CountdownFlagModel(true),
         ),
         /*
         ChangeNotifierProxyProvider3<TotalTimesModel, SingleTimeModel,
@@ -47,8 +48,7 @@ class CountdownPage extends StatelessWidget {
           backgroundColor: Colors.white,
         ),
         body: _CountdownContainer(
-            timerSetting:
-                TimerSetting.copy(currentTimerSettingModel.timerSetting)),
+            timerSetting: timerSetting),
       ),
     );
   }
@@ -76,34 +76,26 @@ class _CountdownContainerState extends State<_CountdownContainer> {
   bool _countdownFlag;
 
   /// 倒计时的间隔
-  static const int CONTDOWN_INTERVAL_MILL = 100;
+  static const int COUNTDOWN_INTERVAL_MILL = 100;
   @override
   void initState() {
     super.initState();
     _timerSetting = widget.timerSetting;
+    print('initState');
+    _resetCountdownTimer();
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-
-    /*
-    _totalTimes = _timerSetting.totalTimes;
-    _singleTime = _timerSetting.singleTime * 1000;
-    _intervalTime = _timerSetting.singleInterval * 1000;
-    _countdownFlag = true;
-    */
-
-    Provider.of<TotalTimesModel>(context)
-        .setTotalTimes(_timerSetting.totalTimes);
-    Provider.of<SingleTimeModel>(context)
-        .setSingleTime(_timerSetting.singleTime * 1000);
-    Provider.of<IntervalTimeModel>(context)
-        .setIntervalTime(_timerSetting.singleInterval * 1000);
-    Provider.of<CountdownFlagModel>(context).setCountdownFlag(true);
     
+  }
+
+  void _resetCountdownTimer() {
+    _countdownTimer?.cancel();
+    _countdownTimer = null;
     _countdownTimer = new Timer.periodic(
-        new Duration(milliseconds: CONTDOWN_INTERVAL_MILL), (timer) {
+        new Duration(milliseconds: COUNTDOWN_INTERVAL_MILL), (timer) {
       TotalTimesModel totalTimesModel = Provider.of<TotalTimesModel>(context);
       if (totalTimesModel.totalTimes <= 0) {
         _countdownTimer.cancel();
@@ -112,20 +104,20 @@ class _CountdownContainerState extends State<_CountdownContainer> {
       }
 
       CountdownFlagModel countdownFlagModel =
-          Provider.of<CountdownFlagModel>(context);
+      Provider.of<CountdownFlagModel>(context);
       SingleTimeModel singleTimeModel = Provider.of<SingleTimeModel>(context);
       IntervalTimeModel intervalTimeModel =
-          Provider.of<IntervalTimeModel>(context);
+      Provider.of<IntervalTimeModel>(context);
       if (countdownFlagModel.countdownFlag) {
         if (singleTimeModel.singleTime > 0) {
-          singleTimeModel.decSingleTime(CONTDOWN_INTERVAL_MILL);
+          singleTimeModel.decSingleTime(COUNTDOWN_INTERVAL_MILL);
         } else {
           countdownFlagModel
               .setCountdownFlag(!countdownFlagModel.countdownFlag);
         }
       } else {
         if (intervalTimeModel.intervalTime > 0) {
-          intervalTimeModel.decSingleTime(CONTDOWN_INTERVAL_MILL);
+          intervalTimeModel.decSingleTime(COUNTDOWN_INTERVAL_MILL);
         } else {
           countdownFlagModel
               .setCountdownFlag(!countdownFlagModel.countdownFlag);
@@ -165,7 +157,6 @@ class _CountdownContainerState extends State<_CountdownContainer> {
       });
       */
     });
-    
   }
 
   @override

@@ -4,6 +4,9 @@ import 'package:flutter/foundation.dart';
 class TotalTimesModel extends ChangeNotifier {
   int totalTimes;
 
+
+  TotalTimesModel(this.totalTimes);
+
   void decTotalTimes() {
     if (totalTimes <= 0) {
       return;
@@ -22,6 +25,8 @@ class TotalTimesModel extends ChangeNotifier {
 class SingleTimeModel extends ChangeNotifier {
   int singleTime;
 
+  SingleTimeModel(this.singleTime);
+
   void decSingleTime(int number) {
     singleTime -= number;
     notifyListeners();
@@ -36,6 +41,8 @@ class SingleTimeModel extends ChangeNotifier {
 
 class IntervalTimeModel extends ChangeNotifier {
   int intervalTime;
+
+  IntervalTimeModel(this.intervalTime);
 
   void decSingleTime(int number) {
     intervalTime -= number;
@@ -54,6 +61,8 @@ class CountdownFlagModel extends ChangeNotifier {
   /// true 为单次时间
   /// false 为间隔时间
   bool countdownFlag;
+
+  CountdownFlagModel(this.countdownFlag);
 
   void setCountdownFlag(bool countdownFlag) {
     this.countdownFlag = countdownFlag;
