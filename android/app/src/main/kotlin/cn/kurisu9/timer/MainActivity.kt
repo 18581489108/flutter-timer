@@ -1,4 +1,4 @@
-package com.example.timer
+package cn.kurisu9.timer
 
 import android.os.Bundle
 
