@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'dart:ffi';
+
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -8,6 +8,7 @@ import 'package:timer/common/theme.dart';
 import 'package:timer/models/countdownData.dart';
 import 'package:timer/models/timerSetting.dart';
 import 'package:timer/models/globalData.dart';
+import 'package:vibrate/vibrate.dart';
 
 class CountdownPage extends StatelessWidget {
   @override
@@ -107,6 +108,7 @@ class _CountdownContainerState extends State<_CountdownContainer> {
         if (singleTimeModel.singleTime > 0) {
           singleTimeModel.decSingleTime(COUNTDOWN_INTERVAL_MILL);
         } else {
+          Vibrate.vibrate();
           countdownFlagModel
               .setCountdownFlag(!countdownFlagModel.countdownFlag);
         }
