@@ -7,7 +7,6 @@ import 'package:timer/common/listdata.dart';
 import 'package:timer/common/theme.dart';
 import 'package:timer/models/globalData.dart';
 import 'package:timer/models/timerSetting.dart';
-import 'package:vibrate/vibrate.dart';
 
 class TimerInputPage extends StatefulWidget {
   @override
@@ -170,9 +169,9 @@ class _TimerInputPageState extends State<TimerInputPage> {
               ),
               color: Colors.blue,
               iconSize: 64,
-              onPressed: () {
+              onPressed: /*() {
                 print('need save');
-              },
+              }*/null,
             ),
           ),
         ],
