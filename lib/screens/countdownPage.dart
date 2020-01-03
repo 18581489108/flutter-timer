@@ -75,6 +75,19 @@ class _CountdownContainerState extends State<_CountdownContainer> {
 
   /// 倒计时的间隔
   static const int COUNTDOWN_INTERVAL_MILL = 100;
+
+  final Iterable<Duration> _singleTimeEndPauses = [
+    const Duration(milliseconds: 200),
+  ];
+
+  final Iterable<Duration> _intervalTimeEndPauses = [
+    const Duration(milliseconds: 100),
+  ];
+
+  final Iterable<Duration> _totalTimesEndPauses = [
+    const Duration(milliseconds: 500),
+  ];
+
   @override
   void initState() {
     super.initState();
@@ -108,7 +121,7 @@ class _CountdownContainerState extends State<_CountdownContainer> {
         if (singleTimeModel.singleTime > 0) {
           singleTimeModel.decSingleTime(COUNTDOWN_INTERVAL_MILL);
         } else {
-          Vibrate.vibrate();
+          Vibrate.vibrateWithPauses(_singleTimeEndPauses);
           countdownFlagModel
               .setCountdownFlag(!countdownFlagModel.countdownFlag);
         }
@@ -120,9 +133,12 @@ class _CountdownContainerState extends State<_CountdownContainer> {
               .setCountdownFlag(!countdownFlagModel.countdownFlag);
           totalTimesModel.decTotalTimes();
           if (totalTimesModel.totalTimes > 0) {
+            Vibrate.vibrateWithPauses(_intervalTimeEndPauses);
             singleTimeModel.setSingleTime(_timerSetting.singleTime * 1000);
             intervalTimeModel
                 .setIntervalTime(_timerSetting.singleInterval * 1000);
+          } else {
+            Vibrate.vibrateWithPauses(_totalTimesEndPauses);
           }
         }
       }
